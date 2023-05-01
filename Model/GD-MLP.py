@@ -50,11 +50,20 @@ def time_series_mlp(x_train, y_train, x_test, y_test, num_features, num_outputs,
     # residual MLP
     residual_mlp = gated_residual_mlp(input_residual, hidden_units)
 
-    # combine trend, seasonal, and residual MLPs
-    combined = tf.keras.layers.Concatenate()([trend_mlp, seasonal_mlp, residual_mlp])
+    # combine trend, seasonal, and residual MLPs with weighted sum
+    trend_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='trend_weight')(trend_mlp)
+    seasonal_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='seasonal_weight')(seasonal_mlp)
+    residual_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='residual_weight')(residual_mlp)
+
+    weighted_sum = tf.keras.layers.Concatenate()([
+        trend_mlp * trend_weight,
+        seasonal_mlp * seasonal_weight,
+        residual_mlp * residual_weight,
+        ])
+        weighted_sum = tf.keras.layers.Lambda(lambda x: tf.reduce_sum(x, axis=-1))(weighted_sum)
 
     # output layer
-    outputs = tf.keras.layers.Dense(num_outputs, activation='linear')(combined)
+    outputs = tf.keras.layers.Dense(self.num_outputs, activation='linear')(weighted_sum)
 
     # define and compile model
     model = tf.keras.Model(inputs=[input_trend, input_seasonal, input_residual],
