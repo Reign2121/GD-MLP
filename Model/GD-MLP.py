@@ -10,72 +10,72 @@ class GatedDecompositionMLP:
         
     def gated_residual_mlp(input, hidden_units):
     # feedforward network with gating and residual connection
-    dense1 = tf.keras.layers.Dense(hidden_units, activation='relu')(input)
-    gate1 = tf.keras.layers.Dense(hidden_units, activation='sigmoid')(input)
-    gated_dense1 = tf.keras.layers.Multiply()([dense1, gate1])
-    residual1 = tf.keras.layers.Add()([gated_dense1, input])
+        dense1 = tf.keras.layers.Dense(hidden_units, activation='relu')(input)
+        gate1 = tf.keras.layers.Dense(hidden_units, activation='sigmoid')(input)
+        gated_dense1 = tf.keras.layers.Multiply()([dense1, gate1])
+        residual1 = tf.keras.layers.Add()([gated_dense1, input])
 
     # feedforward network with gating and residual connection
-    dense2 = tf.keras.layers.Dense(hidden_units, activation='relu')(residual1)
-    gate2 = tf.keras.layers.Dense(hidden_units, activation='sigmoid')(residual1)
-    gated_dense2 = tf.keras.layers.Multiply()([dense2, gate2])
-    residual2 = tf.keras.layers.Add()([gated_dense2, residual1])
+        dense2 = tf.keras.layers.Dense(hidden_units, activation='relu')(residual1)
+        gate2 = tf.keras.layers.Dense(hidden_units, activation='sigmoid')(residual1)
+        gated_dense2 = tf.keras.layers.Multiply()([dense2, gate2])
+        residual2 = tf.keras.layers.Add()([gated_dense2, residual1])
 
-    return residual2
+        return residual2
 
 
-def time_series_mlp(x_train, y_train, x_test, y_test, num_features, num_outputs, hidden_units):
+    def time_series_mlp(x_train, y_train, x_test, y_test, num_features, num_outputs, hidden_units):
     # seasonal decomposition
-    result_train = seasonal_decompose(x_train[:, :, 0], model='additive', period=24)
-    trend_train = result_train.trend
-    seasonal_train = result_train.seasonal
-    residual_train = result_train.resid
+        result_train = seasonal_decompose(x_train[:, :, 0], model='additive', period=24)
+        trend_train = result_train.trend
+        seasonal_train = result_train.seasonal
+        residual_train = result_train.resid
 
-    result_test = seasonal_decompose(x_test[:, :, 0], model='additive', period=24)
-    trend_test = result_test.trend
-    seasonal_test = result_test.seasonal
-    residual_test = result_test.resid
+        result_test = seasonal_decompose(x_test[:, :, 0], model='additive', period=24)
+        trend_test = result_test.trend
+        seasonal_test = result_test.seasonal
+        residual_test = result_test.resid
 
-    # input layers
-    input_trend = tf.keras.layers.Input(shape=(None, 1), name='input_trend')
-    input_seasonal = tf.keras.layers.Input(shape=(None, 1), name='input_seasonal')
-    input_residual = tf.keras.layers.Input(shape=(None, num_features-2), name='input_residual')
+        # input layers
+        input_trend = tf.keras.layers.Input(shape=(None, 1), name='input_trend')
+        input_seasonal = tf.keras.layers.Input(shape=(None, 1), name='input_seasonal')
+        input_residual = tf.keras.layers.Input(shape=(None, num_features-2), name='input_residual')
 
-    # trend MLP
-    trend_mlp = gated_residual_mlp(input_trend, hidden_units)
+        # trend MLP
+        trend_mlp = gated_residual_mlp(input_trend, hidden_units)
 
-    # seasonal MLP
-    seasonal_mlp = gated_residual_mlp(input_seasonal, hidden_units)
+        # seasonal MLP
+        seasonal_mlp = gated_residual_mlp(input_seasonal, hidden_units)
 
-    # residual MLP
-    residual_mlp = gated_residual_mlp(input_residual, hidden_units)
+        # residual MLP
+        residual_mlp = gated_residual_mlp(input_residual, hidden_units)
 
-    # combine trend, seasonal, and residual MLPs with weighted sum
-    trend_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='trend_weight')(trend_mlp)
-    seasonal_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='seasonal_weight')(seasonal_mlp)
-    residual_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='residual_weight')(residual_mlp)
+        # combine trend, seasonal, and residual MLPs with weighted sum
+        trend_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='trend_weight')(trend_mlp)
+        seasonal_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='seasonal_weight')(seasonal_mlp)
+        residual_weight = tf.keras.layers.Dense(1, activation='sigmoid', name='residual_weight')(residual_mlp)
 
-    weighted_sum = tf.keras.layers.Concatenate()([
-        trend_mlp * trend_weight,
-        seasonal_mlp * seasonal_weight,
-        residual_mlp * residual_weight,
-        ])
+        weighted_sum = tf.keras.layers.Concatenate()([
+            trend_mlp * trend_weight,
+            seasonal_mlp * seasonal_weight,
+            residual_mlp * residual_weight,
+            ])
         weighted_sum = tf.keras.layers.Lambda(lambda x: tf.reduce_sum(x, axis=-1))(weighted_sum)
 
-    # output layer
-    outputs = tf.keras.layers.Dense(self.num_outputs, activation='linear')(weighted_sum)
+        # output layer
+        outputs = tf.keras.layers.Dense(self.num_outputs, activation='linear')(weighted_sum)
 
-    # define and compile model
-    model = tf.keras.Model(inputs=[input_trend, input_seasonal, input_residual],
-                           outputs=outputs)
-    model.compile(loss='mse', optimizer='adam')
+        # define and compile model
+        model = tf.keras.Model(inputs=[input_trend, input_seasonal, input_residual],
+                              outputs=outputs)
+        model.compile(loss='mse', optimizer='adam')
 
-    # train model
-    model.fit([trend_train, seasonal_train, residual_train],
-              y_train,
-              epochs=50,
-              batch_size=128,
-              validation_data=([trend_test, seasonal_test, residual_test], y_test),
-              verbose=2)
+        # train model
+        model.fit([trend_train, seasonal_train, residual_train],
+                  y_train,
+                  epochs=50,
+                  batch_size=128,
+                  validation_data=([trend_test, seasonal_test, residual_test], y_test),
+                  verbose=2)
 
-    return model
+        return model
