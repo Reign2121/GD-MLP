@@ -37,10 +37,9 @@ class GatedDecompositionMLP:
         trend_test = moving_average(x_test)
         residual_test = x_test - trend_test
 
-        print("4:num_feature:{}".format(self.num_features))
         # input layers
         input_trend = tf.keras.layers.Input(shape=(None, self.num_features), name='input_trend')
-        print("5:trend.shape:{}".format(input_trend.shape))
+       
         input_residual = tf.keras.layers.Input(shape=(None, self.num_features), name='input_residual')
 
 
