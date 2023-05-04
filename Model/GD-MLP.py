@@ -3,9 +3,9 @@ import tensorflow as tf
 
 class GatedDecompositionMLP:
     
-    def __init__(self, num_features, num_outputs, hidden_units, moving_avg_kernel_size=25, moving_avg_stride=1):
+    def __init__(self, num_features, pred_len, hidden_units, moving_avg_kernel_size=25, moving_avg_stride=1):
         self.num_features = num_features
-        self.num_outputs = num_outputs
+        self.pred_len = pred_len
         self.hidden_units = hidden_units
         self.moving_avg_kernel_size = moving_avg_kernel_size
         self.moving_avg_stride = moving_avg_stride
@@ -57,7 +57,7 @@ class GatedDecompositionMLP:
         #weighted_sum = tf.keras.layers.Lambda(lambda x: tf.reduce_sum(x, axis=-1))(weighted_sum)
 
         # output layer
-        outputs = tf.keras.layers.Dense(self.num_outputs, activation='linear')(weighted_sum)
+        outputs = tf.keras.layers.Dense(self.pred_len, activation='linear')(weighted_sum)
 
         # define and compile model
         model = tf.keras.Model(inputs=[input_trend, input_residual],
