@@ -54,7 +54,7 @@ class GatedDecompositionMLP:
         weighted_sum =  trend_mlp * trend_weight + residual_mlp * residual_weight
         print(weighted_sum)
 
-        weighted_sum = tf.keras.layers.Lambda(lambda x: tf.reduce_sum(x, axis=-1))(weighted_sum)
+        #weighted_sum = tf.keras.layers.Lambda(lambda x: tf.reduce_sum(x, axis=-1))(weighted_sum)
 
         # output layer
         outputs = tf.keras.layers.Dense(self.num_outputs, activation='linear')(weighted_sum)
