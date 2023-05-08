@@ -1,3 +1,6 @@
+
+import pytorch
+
 class GatedDecompositionMLP(nn.Module):
     def __init__(self, num_features, pred_len, hidden_units, moving_avg_kernel_size=25, moving_avg_stride=1):
         super(GatedDecompositionMLP, self).__init__()
