@@ -44,7 +44,7 @@ class series_decomp(nn.Module):
 class gated_mlp (nn.Module):
 
     """
-    MLP block
+    MLP block(gated_mlp)
     """
     def __init__(self, num_features, pred_len, hidden_units):
         super(gated_mlp, self).__init__()
@@ -88,7 +88,7 @@ class gated_mlp (nn.Module):
         
 
         # residual MLP(gated)
-        residual_mlp = self.residual_mlp(residual_train) #MLP 적용
+        residual_mlp = self.residual_mlp(residual_train) #MLP 통과
         gate_r = self.gate(residual_mlp) #gate 통과
         residual_mlp = residual_mlp * gate_r #element-wise product #torch.mul(residual_mlp, gate_r)
         residual_mlp = self.layer(residual_mlp)
@@ -128,16 +128,16 @@ class gated_sum (nn.Module):
     def forward(self, x):
         
         # gated_mlp
-        trend_mlp, residual_mlp = self.gated_mlp(x) 
+        trend_mlp, residual_mlp = self.gated_mlp(x)  #gated_mlp 블록을 통과
         
         # output layer
-        output_trend = self.output_layer(trend_mlp)
-        output_residual = self.output_layer(residual_mlp)
+        output_trend = self.output_layer(trend_mlp)  #trend_output
+        output_residual = self.output_layer(residual_mlp) #residual_output
         
         # combine trend and residual MLPs with weighted sum
-        trend_weight = self.trend_weight(output_trend)
-        residual_weight = self.residual_weight(output_residual)
+        trend_weight = self.trend_weight(output_trend) # gate 통과
+        residual_weight = self.residual_weight(output_residual) # gate 통과
 
-        weighted_sum = (trend_mlp * trend_weight) + (residual_mlp * residual_weight)
+        weighted_sum = (trend_mlp * trend_weight) + (residual_mlp * residual_weight) # Weighted sum == Final Output
 
-        return weighted_sum
+        return weighted_sum #Final Output
