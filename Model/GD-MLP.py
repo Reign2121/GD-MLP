@@ -136,7 +136,7 @@ class gated_sum (nn.Module):
         
         # combine trend and residual MLPs with weighted sum
         trend_weight = self.trend_weight(output_trend)
-        residual_weight = self.residual_weight(outpur_residual)
+        residual_weight = self.residual_weight(output_residual)
 
         weighted_sum = (trend_mlp * trend_weight) + (residual_mlp * residual_weight)
 
