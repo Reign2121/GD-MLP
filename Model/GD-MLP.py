@@ -120,7 +120,7 @@ class gated_sum (nn.Module):
             nn.Sigmoid()
         )
         
-        self.output_layer = nn.Linear(self.hidden_units,self.pred_len)
+        self.output_layer = nn.Linear(self.hidden_units,self.pred_len) #실험 예정
 
     def forward(self, x):
         trend_mlp, residual_mlp = self.gated_mlp(x)  
