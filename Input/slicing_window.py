@@ -18,7 +18,3 @@ data = np.random.randn(500)
 window_size = 100
 horizon = 10
 x, y = create_longterm_input_output(data, window_size, horizon)
-
-# 마지막 100시점을 사용하여 다음 10시점 예측
-last_window = data[-window_size:]
-next_10_periods_pred = model.predict(last_window.reshape(1, window_size, 1))[0]
