@@ -1,6 +1,4 @@
 import torch
-
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -19,9 +17,9 @@ class moving_avg(nn.Module):
         # padding on the both ends of time series
         front = x[:, 0:1, :].repeat(1, (self.kernel_size - 1) // 2, 1)
         end = x[:, -1:, :].repeat(1, (self.kernel_size - 1) // 2, 1)
-        x = torch.cat([front, x, end], dim=1)
-        x = self.avg(x.permute(0, 2, 1))
-        x = x.permute(0, 2, 1)
+        x = torch.cat([front, x, end], dim=1) # -> torch.Size([8, 360, 8])
+        x = self.avg(x.permute(0, 2, 1)) # -> torch.Size([8, 8, 336])
+        x = x.permute(0, 2, 1) # -> torch.Size([8, 336, 8])
         return x
 
 
@@ -37,8 +35,7 @@ class series_decomp(nn.Module):
     def forward(self, x):
         trend = self.moving_avg(x)
         res = x - trend
-        return res, trend
-
+        return res, trend #torch.Size([8, 336, 8])
 
 
 class gated_mlp (nn.Module):
@@ -46,16 +43,19 @@ class gated_mlp (nn.Module):
     """
     MLP block(gated_mlp)
     """
-    def __init__(self, num_features, pred_len, hidden_units):
+    def __init__(self, seq_len, num_features, pred_len, hidden_units):
         super(gated_mlp, self).__init__()
+        self.seq_len = seq_len #인풋 길이
         self.num_features = num_features #피처 수
         self.pred_len = pred_len # 예측 길이
         self.hidden_units = hidden_units #노드 수
         kernel_size = 25 #same as Autoformer, Dlinear
         self.decomposition = series_decomp(kernel_size)
+        
+        self.input_layer = nn.Linear(self.num_features,1) 
 
-        self.trend_mlp = nn.Sequential( 
-            nn.Linear(self.num_features, self.hidden_units), 
+        self.trend_mlp = nn.Sequential(
+            nn.Linear(self.seq_len, self.hidden_units), 
             nn.ReLU(),
             nn.Linear(self.hidden_units, self.hidden_units),
             nn.ReLU()
@@ -63,7 +63,7 @@ class gated_mlp (nn.Module):
 
 
         self.residual_mlp = nn.Sequential(
-            nn.Linear(self.num_features, self.hidden_units),
+            nn.Linear(self.seq_len, self.hidden_units),
             nn.ReLU(),
             nn.Linear(self.hidden_units, self.hidden_units),
             nn.ReLU()
@@ -78,22 +78,25 @@ class gated_mlp (nn.Module):
 
     def forward(self, x):
         
-        residual_train,trend_train = self.decomposition(x)
+        residual_train,trend_train = self.decomposition(x) # torch.Size([8, 336, 8])
+        trend_train = self.input_layer(trend_train) #-> torch.Size([8, 336, 1])
+        residual_train = self.input_layer(residual_train)
+        
+        residual_train,trend_train = residual_train.permute(0,2,1), trend_train.permute(0,2,1) #-> torch.Size([8, 1, 336])
 
         # trend MLP (gated)
-        trend_mlp = self.trend_mlp(trend_train) #MLP 통과
-        gate_t = self.gate(trend_mlp) #gate 통과
-        trend_mlp = trend_mlp * gate_t #element-wise product #torch.mul(residual_mlp, gate_r)
-        trend_mlp = self.layer(trend_mlp)
-        
+        trend_mlp = self.trend_mlp(trend_train) #MLP 통과 #-> torch.Size([8, 1, 512])
+        gate_t = self.gate(trend_mlp) #gate 통과 #-> torch.Size([8, 1, 512])
+        trend_mlp = trend_mlp * gate_t #element-wise product #torch.mul(residual_mlp, gate_r) #-> torch.Size([8, 1, 512])
+        trend_mlp = self.layer(trend_mlp) #-> torch.Size([8, 1, 512])
 
         # residual MLP(gated)
-        residual_mlp = self.residual_mlp(residual_train) #MLP 통과
-        gate_r = self.gate(residual_mlp) #gate 통과
-        residual_mlp = residual_mlp * gate_r #element-wise product #torch.mul(residual_mlp, gate_r)
-        residual_mlp = self.layer(residual_mlp)
+        residual_mlp = self.residual_mlp(residual_train) #MLP 통과 #-> torch.Size([8, 1, 512])
+        gate_r = self.gate(residual_mlp) #gate 통과 #-> torch.Size([8, 1, 512])
+        residual_mlp = residual_mlp * gate_r #element-wise product #torch.mul(residual_mlp, gate_r) #-> torch.Size([8, 1, 512])
+        residual_mlp = self.layer(residual_mlp) #-> torch.Size([8, 1, 512])
 
-        return trend_mlp, residual_mlp
+        return trend_mlp, residual_mlp #torch.Size([8, 1, 512])
 
 
 
@@ -103,24 +106,25 @@ class gated_sum (nn.Module):
     Composing block with gate
     """
      
-    def __init__(self, num_features, pred_len, hidden_units):
+    def __init__(self, seq_len, num_features, pred_len, hidden_units):
         super(gated_sum, self).__init__()
+        self.seq_len = seq_len #인풋 길이
         self.num_features = num_features #same as gated mlp
         self.pred_len = pred_len
         self.hidden_units = hidden_units
         kernel_size = 25
         self.decomposition = series_decomp(kernel_size)
-        self.gated_mlp = gated_mlp(num_features, pred_len, hidden_units) # 상속받은 부모 클래스의 인스턴스의 속성을 다시 쓰기 위해 초기화해줘야 한다.
+        self.gated_mlp = gated_mlp(seq_len, num_features, pred_len, hidden_units) 
         
         self.output_layer = nn.Linear(self.hidden_units,self.pred_len) #pred_len으로 산출하기 위한 output_layer
         
         self.trend_weight = nn.Sequential(
-            nn.Linear(self.hidden_units, 1), #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
+            nn.Linear(self.pred_len, 1), #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
             nn.Sigmoid() 
         )
 
         self.residual_weight = nn.Sequential(
-            nn.Linear(self.hidden_units, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
+            nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
             nn.Sigmoid()
         )
         
@@ -128,16 +132,18 @@ class gated_sum (nn.Module):
     def forward(self, x):
         
         # gated_mlp
-        trend_mlp, residual_mlp = self.gated_mlp(x)  #gated_mlp 블록을 통과
-        
+        trend_mlp, residual_mlp = self.gated_mlp(x)  #gated_mlp 블록을 통과 #->torch.Size([8, 1, 512])
+
         # output layer
-        output_trend = self.output_layer(trend_mlp)  #trend_output
-        output_residual = self.output_layer(residual_mlp) #residual_output
+        output_trend = self.output_layer(trend_mlp)  #output_layer 통과 #->torch.Size([8, 1, 96])
+        output_residual = self.output_layer(residual_mlp) #output_layer 통과 #->torch.Size([8, 1, 96])
         
         # combine trend and residual MLPs with weighted sum
-        trend_weight = self.trend_weight(output_trend) # gate 통과
-        residual_weight = self.residual_weight(output_residual) # gate 통과
+        trend_weight = self.trend_weight(output_trend) # gate 통과 #->torch.Size([8, 1, 1])
+        residual_weight = self.residual_weight(output_residual) # gate 통과 #->torch.Size([8, 1, 1])
 
-        weighted_sum = (trend_mlp * trend_weight) + (residual_mlp * residual_weight) # Weighted sum == Final Output
+        #trend_weight,residual_weight = trend_weight.permute(0,2,1), residual_weight.permute(0,2,1)
 
-        return weighted_sum #Final Output
+        weighted_sum = (output_trend * trend_weight) + (output_residual * residual_weight) # Weighted sum == Final Output #->torch.Size([8, 1, 96])
+        
+        return weighted_sum.permute(0,2,1) #Final Output #->torch.Size([8, 96, 1])
