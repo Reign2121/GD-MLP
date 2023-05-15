@@ -4,7 +4,9 @@
 
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
-![Uploading image.png…]()
+
+<img width="860" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/a60b59cb-7b0f-42c5-ba3d-a245953aa868">
+
 
 
 
