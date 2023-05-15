@@ -30,8 +30,8 @@ class Custom_Seq_Dataset(Dataset):
       
       data = Custom_Seq_Dataset(data=data,input_len=336, label_len=96,pred_len=96,target='OT') #Hyperparameter
     
-    #분할
-    
+
+#분할    
 train_size = int(0.7 * len(data))  #분할했을 때 수 반환해서 미리 체크
 val_size = int(0.1 * len(data))    
 test_size = len(data) - train_size - val_size
