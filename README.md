@@ -4,6 +4,10 @@
 
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
+![Uploading image.png…]()
+
+
+
 _______________________
 
 IDEA:
