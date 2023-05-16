@@ -5,7 +5,8 @@
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
 
-<img width="860" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/a60b59cb-7b0f-42c5-ba3d-a245953aa868">
+<img width="860" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/c19afafe-1d0e-4056-ae2d-81d4cd89f905">
+
 
 모델 기본 구조 출처) D-Linear https://github.com/cure-lab/LTSF-Linear
 
