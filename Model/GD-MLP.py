@@ -78,8 +78,6 @@ class gated_mlp (nn.Module):
         ) # MLP for Residual
 
 
-        #self.layer = nn.Linear(self.hidden_units, self.hidden_units)
-
 
     def forward(self, x):
         
