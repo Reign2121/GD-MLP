@@ -148,8 +148,8 @@ class gated_sum (nn.Module):
         output_residual = self.output_layer(residual_mlp) #output_layer 통과 #->torch.Size([8, 1, 96])
         
         # combine trend and residual MLPs with weighted sum
-        trend_weight = self.gated_trend(output_trend) # gate 통과 #->torch.Size([8, 96, 1])
-        residual_weight = self.gated_residual(output_residual) # gate 통과 #->torch.Size([8, 96, 1])
+        trend_weight = self.gated_trend(output_trend) # gate 통과 #->torch.Size([8, 1, 1])
+        residual_weight = self.gated_residual(output_residual) # gate 통과 #->torch.Size([8, 1, 1])
 
         #trend_weight,residual_weight = trend_weight.permute(0,2,1), residual_weight.permute(0,2,1)
 
