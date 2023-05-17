@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# ([batch_size, seq_len, features)]
+# ex) batch_size = 8, seq_len = 336, features = 8 #same as D-Linear
+# input.shape = torch.Size([8, 336, 8)]
 
 class moving_avg(nn.Module):
     """
