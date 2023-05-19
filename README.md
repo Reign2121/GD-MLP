@@ -1,4 +1,4 @@
-## GD-MLP (Gated Decomposition MLP) (making)
+## GD-MLP (Gated Decomposition MLP) (making, unfinished)
 
 <b>실생활의 불안정한 변동요인을 고려한 효율적인 장기 시계열 예측 모델 연구</b>
 
