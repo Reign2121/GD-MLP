@@ -55,7 +55,7 @@ class gated_mlp (nn.Module):
         kernel_size = 25 #same as Autoformer, Dlinear
         self.decomposition = series_decomp(kernel_size)
         
-        self.input_layer = nn.Linear(self.num_features,1) #차원 축소
+        self.input_layer = nn.Linear(self.num_features,1) #다변량 시계열에서 차원 축소
 
         self.input_gate = nn.Sequential(
             nn.Linear(self.seq_len, 1),
