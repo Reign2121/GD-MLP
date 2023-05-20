@@ -57,13 +57,10 @@ class gated_mlp (nn.Module):
         
         self.input_layer = nn.Linear(self.num_features,1) #차원 축소
 
-        self.input_gate_t = nn.Sequential(
+        self.input_gate = nn.Sequential(
             nn.Linear(self.seq_len, 1),
-            nn.Sigmoid()) #Input_gate for Trend
+            nn.Sigmoid()) #Input_gate
 
-        self.input_gate_r = nn.Sequential(
-            nn.Linear(self.seq_len, 1),
-            nn.Sigmoid()) #Input_gate for Residual    
 
         self.trend_mlp = nn.Sequential(
             nn.Linear(self.seq_len, self.hidden_units), 
@@ -93,10 +90,10 @@ class gated_mlp (nn.Module):
         residual_train,trend_train = residual_train.permute(0,2,1), trend_train.permute(0,2,1) #-> torch.Size([8, 1, 336])
 
         #input_gate
-        i_gate_t = self.input_gate_t(trend_train) #-> torch.Size([8, 1, 336])
+        i_gate_t = self.input_gate(trend_train) #-> torch.Size([8, 1, 336])
         trend_train = trend_train * i_gate_t #-> torch.Size([8, 1, 336])
 
-        i_gate_r = self.input_gate_r(residual_train) #-> torch.Size([8, 1, 336])
+        i_gate_r = (1 - self.input_gate(trend_train)) #-> torch.Size([8, 1, 336])
         residual_train = residual_train * i_gate_r #-> torch.Size([8, 1, 336])
 
 
