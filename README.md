@@ -45,7 +45,7 @@ GD-MLP
 이를 위해 최근의 연구 결과를 바탕으로 트랜스포머 구조가 아닌 MLP 구조를 기반으로 한 GD-MLP(Gated Decomposition MLP) 모델을 디자인하였다. 
 
 이 모델의 핵심은 두 가지 Gate로, 
-Input Gate로 인풋 시리즈의 Locality를 반영하며, Output Gate로 분해된 변동의 영향력을 반영한다. 
+Input Gate로 trend 변동과 residual 변동의 영향력을 반영하며, Output Gate로 그 영향력을 추가적으로 반영한다. 
 
 ________________________
 
