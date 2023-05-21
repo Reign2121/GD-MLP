@@ -1,6 +1,6 @@
 ## GD-MLP (Gated Decomposition MLP) (making, unfinished)
 
-<b>실생활의 불안정한 변동요인을 고려한 효율적인 장기 시계열 예측 모델 연구</b>
+<b>실생활의 응용에 적합한 효율적인 장기 시계열 예측 모델 연구</b>
 
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
@@ -28,7 +28,7 @@ Solution IDEA:
 
 Previous works:
 
-- 트랜스포머는 Locality를 반영하지 못한다. (어텐션 매커니즘이 순서와 무관하게 동작하기 때문에)
+- 트랜스포머는 Locality를 효과적으로 반영하지 못한다. (어텐션 매커니즘이 순서와 무관하게 동작하기 때문에)
 
 - 트랜스포머 변형 모델들의 주장과 달리, 여전히 메모리와 시간의 비효율성이 개선되지 못했다.
 
