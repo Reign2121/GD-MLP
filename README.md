@@ -55,6 +55,11 @@ Experiment
 
 서대문구 상권 데이터, 코로나로 인해 매출의 추세가 매우 불안정했던 2020년의 시계열을 예측한다. 약 (2200개 포인트)
 
-Univariate,
+- Univariate 예측
 
-Multivariate,
+- Multivariate 예측
+
+- Gate에 따른 파라미터 최적화
+
+- Ma의 커널 사이즈, 은닉층 노드 수 등 하이퍼 파라미터 최적화
+
