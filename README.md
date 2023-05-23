@@ -5,7 +5,7 @@
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
 
-<div align=center> <br> Basic Architecture </br> </div>
+<br> Basic Architecture </br>
 
 <img width="828" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/f25be193-601c-4d2f-b014-2e6625b5d907">
 
