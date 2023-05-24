@@ -54,10 +54,10 @@ ________________________
 
 Data
 
-유동인구의 추세
+유동인구의 변동
 ![image](https://github.com/Reign2121/GD-MLP/assets/121419113/4d6b3a73-411e-4968-a338-ad7ba7a4db2c)
 
-매출건수의 추세 
+매출건수의 변동 
 ![image](https://github.com/Reign2121/GD-MLP/assets/121419113/5b9fa967-178b-4550-8744-5b3e0875e7dd)
 
 데이터: 벤치마크 데이터 + 서대문구 상권 데이터 (2020년) (target: 유동인구, 매출 건수)
