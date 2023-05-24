@@ -7,7 +7,7 @@ A study of an efficient long-term time series forecasting model considering unst
 
 <br> Basic Architecture </br>
 
-<img width="828" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/f25be193-601c-4d2f-b014-2e6625b5d907">
+<img width="896" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/6272fe4f-c947-465e-bb79-891823d0a0fe">
 
 
 모델 기본 구조 출처) D-Linear https://github.com/cure-lab/LTSF-Linear
