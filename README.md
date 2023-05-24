@@ -54,7 +54,7 @@ ________________________
 
 Data
 
-<img width="1173" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/1f357023-1707-4bdd-9f34-a3d83d924caa">
+<img width="1173" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/3b55d23a-1477-44c7-9486-4f31bc98b72f">
 
 데이터: 벤치마크 데이터 + 서대문구 상권 데이터 (2020년) (target: 매출 건수)
 
