@@ -63,18 +63,14 @@ class gated_mlp (nn.Module):
 
 
         self.trend_mlp = nn.Sequential(
-            nn.Linear(self.seq_len, self.hidden_units), 
-            #nn.ReLU(),
-            nn.Linear(self.hidden_units, self.hidden_units),
-            #nn.ReLU()
+            nn.Linear(self.seq_len, self.hidden_units),
+            nn.Linear(self.hidden_units, self.hidden_units)
         ) # MLP for Trend
 
 
         self.residual_mlp = nn.Sequential(
             nn.Linear(self.seq_len, self.hidden_units),
-            #nn.ReLU(),
-            nn.Linear(self.hidden_units, self.hidden_units),
-            #nn.ReLU()
+            nn.Linear(self.hidden_units, self.hidden_units)
         ) # MLP for Residual
 
 
