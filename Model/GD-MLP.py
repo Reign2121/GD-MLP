@@ -121,7 +121,7 @@ class gated_sum (nn.Module):
         self.decomposition = series_decomp(kernel_size)
         self.gated_mlp = gated_mlp(seq_len, num_features, pred_len, hidden_units) 
         
-        self.output_layer = nn.Linear(self.hidden_units,self.pred_len) #pred_len으로 산출하기 위한 output_layer
+        self.output_layer = nn.Linear(self.hidden_units,self.pred_len) #pred_len으로 선형변환하기 위한 output_layer
         
         #Output gate
         self.gated_trend = nn.Sequential(
