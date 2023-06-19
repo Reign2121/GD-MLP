@@ -77,3 +77,5 @@ Experiment (🔥 진행 중 )
 
 - Ma의 커널 사이즈, 은닉층 노드 수 등 하이퍼 파라미터 최적화
 
+https://reign2121.notion.site/GD-MLP-e6154d388eb14c1bbdc5f2bfdd0ecfb0
+
