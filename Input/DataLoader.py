@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-batch_size=8 
+batch_size=8 #same as D-Linear in Exchange Rate
 
 train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=False)
 val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
