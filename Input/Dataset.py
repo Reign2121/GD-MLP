@@ -6,7 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 class Custom_Seq_Dataset(Dataset):
     def __init__(self, data, input_len,label_len, pred_len, target):
         self.data = data
-        self.target = data[target].values #넘파이
+        self.target = data[target].values #numpy
         self.data = data.values
         self.input_len = input_len
         self.label_len = label_len
