@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # ([batch_size, seq_len, features)]
-# ex) batch_size = 8, seq_len = 336, features = 8 #same as D-Linear
-# input.shape = torch.Size([8, 336, 8)]
+# ex) batch_size = 8, seq_len = 336, features = 1
+# input.shape = torch.Size([8, 336, 1)]
 
 class moving_avg(nn.Module):
     """
@@ -20,9 +20,9 @@ class moving_avg(nn.Module):
         # padding on the both ends of time series
         front = x[:, 0:1, :].repeat(1, (self.kernel_size - 1) // 2, 1)
         end = x[:, -1:, :].repeat(1, (self.kernel_size - 1) // 2, 1)
-        x = torch.cat([front, x, end], dim=1) # -> torch.Size([8, 360, 8])
-        x = self.avg(x.permute(0, 2, 1)) # -> torch.Size([8, 8, 336])
-        x = x.permute(0, 2, 1) # -> torch.Size([8, 336, 8])
+        x = torch.cat([front, x, end], dim=1) # -> torch.Size([8, 360, 1])
+        x = self.avg(x.permute(0, 2, 1)) # -> torch.Size([8, 1, 336])
+        x = x.permute(0, 2, 1) # -> torch.Size([8, 336, 1])
         return x
 
 
@@ -38,7 +38,7 @@ class series_decomp(nn.Module):
     def forward(self, x):
         trend = self.moving_avg(x)
         res = x - trend
-        return res, trend #torch.Size([8, 336, 8])
+        return res, trend #torch.Size([8, 336, 1])
 
 
 class gated_mlp (nn.Module):
@@ -77,9 +77,9 @@ class gated_mlp (nn.Module):
 
     def forward(self, x):
         
-        residual_train,trend_train = self.decomposition(x) # torch.Size([8, 336, 8])
+        residual_train,trend_train = self.decomposition(x) # torch.Size([8, 336, 1])
 
-        #input_layer 
+        #input_layer #not necessary
         trend_train = self.input_layer(trend_train) #-> torch.Size([8, 336, 1])
         residual_train = self.input_layer(residual_train)
 
@@ -129,10 +129,9 @@ class gated_sum (nn.Module):
             nn.Sigmoid() 
         )
 
-        self.gated_residual = nn.Sequential(
-            nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
-            nn.Sigmoid()
-        )
+        #self.gated_residual = nn.Sequential(
+        #    nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
+        #    nn.Sigmoid())
         
 
     def forward(self, x):
@@ -146,7 +145,7 @@ class gated_sum (nn.Module):
         
         # combine trend and residual MLPs with weighted sum
         trend_weight = self.gated_trend(output_trend) # gate 통과 #->torch.Size([8, 1, 1])
-        residual_weight = self.gated_residual(output_residual) # gate 통과 #->torch.Size([8, 1, 1])
+        residual_weight = (1-trend_weight)
 
         #trend_weight,residual_weight = trend_weight.permute(0,2,1), residual_weight.permute(0,2,1)
 
