@@ -89,7 +89,7 @@ class gated_mlp (nn.Module):
         i_gate_t = self.input_gate(trend_train) #-> torch.Size([8, 1, 336])
         trend_train = trend_train * i_gate_t #-> torch.Size([8, 1, 336])
 
-        i_gate_r = (1 - i_gate_t) #-> torch.Size([8, 1, 336])  #residual, (1-trend)!
+        i_gate_r = self.input_gate(residual_train) #-> torch.Size([8, 1, 336])
         residual_train = residual_train * i_gate_r #-> torch.Size([8, 1, 336])
 
         
