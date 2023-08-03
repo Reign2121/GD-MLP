@@ -21,15 +21,11 @@ class gated_sum (nn.Module):
         self.output_layer = nn.Linear(self.hidden_units,self.pred_len) #pred_len으로 산출하기 위한 output_layer
         
         #Output gate
-        self.gated_trend = nn.Sequential(
-            nn.Linear(self.pred_len, 1), #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
-            nn.Sigmoid() 
-        )
+        self.output_gate = nn.Sequential(
+            nn.Linear(self.pred_len, 1), #가중합 하기 위한 gate  
+            nn.Sigmoid())
 
-        #self.gated_residual = nn.Sequential(
-        #    nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
-        #    nn.Sigmoid())
-        
+
 
     def forward(self, x):
         
@@ -41,7 +37,7 @@ class gated_sum (nn.Module):
         output_residual = self.output_layer(residual_mlp) #output_layer 통과 #->torch.Size([8, 1, 96])
         
         # combine trend and residual MLPs with weighted sum
-        trend_weight = self.gated_trend(output_trend) # gate 통과 #->torch.Size([8, 1, 1])
+        trend_weight = self.output_gate(output_trend) # gate 통과 #->torch.Size([8, 1, 1])
         residual_weight = (1 - trend_weight)
 
         #trend_weight,residual_weight = trend_weight.permute(0,2,1), residual_weight.permute(0,2,1)
