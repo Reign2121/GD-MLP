@@ -19,7 +19,7 @@ class gated_mlp (nn.Module):
         self.input_layer = nn.Linear(self.num_features,1) #차원 축소
 
         self.input_gate = nn.Sequential(
-            nn.Linear(self.seq_len, 1),
+            nn.Linear(self.seq_len, self.seq_len),
             nn.Sigmoid()) #Input_gate   
 
         self.trend_mlp = nn.Sequential(
