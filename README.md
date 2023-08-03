@@ -7,7 +7,8 @@ A study of an efficient long-term time series forecasting model considering unst
 
 <br> Global Architecture </br>
 
-<img width="905" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/7706c734-597a-4f0b-9ce7-a165bc52bc28">
+<img width="905" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/0e2a3ff0-9446-49a2-974d-239232121b64">
+
 
 
 
@@ -49,9 +50,10 @@ GD-MLP
 이를 위해 최근의 연구 결과를 바탕으로 트랜스포머 구조가 아닌 MLP 구조를 기반으로 한 GD-MLP(Gated Decomposition MLP) 모델을 디자인하였다. 
 
 이 모델의 핵심은 두 가지 Gate로, 
-기본적으로 Input Gate, Output Gate의 결과값은 각각 a와 1-a로 설정하여 서로의 영향력을 나눠가지도록 했다.
 
 Input Gate는 인풋 시리즈의 각 포인트의 가중치를 산출하며, Output Gate는 trend와 residual을 가중합하는 데 쓰이는 가중치를 산출하는 역할을 한다.
+
+이때 Output Gate의 결과값은 각각 a와 1-a로 설정하여 서로의 영향력을 공유하도록 했다.
 
 ________________________
 
