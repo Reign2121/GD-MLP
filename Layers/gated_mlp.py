@@ -37,7 +37,7 @@ class gated_mlp (nn.Module):
 
     def forward(self, x):
         
-        residual_train,trend_train = self.decomposition(x) # torch.Size([8, 336, 8])
+        residual_train,trend_train = self.decomposition(x) # torch.Size([8, 336, 1])
 
         #input_layer 
         trend_train = self.input_layer(trend_train) #-> torch.Size([8, 336, 1])
