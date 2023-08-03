@@ -125,12 +125,12 @@ class gated_sum (nn.Module):
         
         #Output gate
         self.gated_trend = nn.Sequential(
-            nn.Linear(self.pred_len, 1), #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
+            nn.Linear(self.pred_len, 1), #가중합 하기 위한 gate  
             nn.Sigmoid() 
         )
 
         #self.gated_residual = nn.Sequential(
-        #    nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  #1은 A/B testing(A:1, B:pred_len) 예정
+        #    nn.Linear(self.pred_len, 1),  #가중합 하기 위한 gate  
         #    nn.Sigmoid())
         
 
