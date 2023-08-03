@@ -5,9 +5,10 @@
 A study of an efficient long-term time series forecasting model considering unstable fluctuation factors in real life.
 
 
-<br> Basic Architecture </br>
+<br> Global Architecture </br>
 
-<img width="896" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/6272fe4f-c947-465e-bb79-891823d0a0fe">
+<img width="905" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/7706c734-597a-4f0b-9ce7-a165bc52bc28">
+
 
 
 모델 기본 구조 출처) D-Linear https://github.com/cure-lab/LTSF-Linear
@@ -48,7 +49,9 @@ GD-MLP
 이를 위해 최근의 연구 결과를 바탕으로 트랜스포머 구조가 아닌 MLP 구조를 기반으로 한 GD-MLP(Gated Decomposition MLP) 모델을 디자인하였다. 
 
 이 모델의 핵심은 두 가지 Gate로, 
-Input Gate를 통해 trend 변동과 residual 변동이 서로의 영향력을 나눠가지도록 하며, Output Gate를 통해 그 영향력을 추가적으로 반영한다. 
+기본적으로 Input Gate, Output Gate의 결과값은 각각 a와 1-a로 설정하여 서로의 영향력을 나눠가지도록 했다.
+
+Input Gate는 인풋 시리즈의 각 포인트의 가중치를 산출하며, Output Gate는 trend와 residual을 가중합하는 데 쓰이는 가중치를 산출하는 역할을 한다.
 
 ________________________
 
