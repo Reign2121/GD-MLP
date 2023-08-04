@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # ([batch_size, seq_len, features)]
-# ex) batch_size = 8, seq_len = 336, features = 1
+# ex) batch_size = 8, seq_len = 336, features = 1, hidden_uits = 512
 # input.shape = torch.Size([8, 336, 1)]
 
 class moving_avg(nn.Module):
@@ -93,7 +93,6 @@ class gated_mlp (nn.Module):
         residual_train = residual_train * i_gate_r #-> torch.Size([8, 1, 336])
 
         
-
         # trend MLP (gated)
         trend_mlp = self.trend_mlp(trend_train) #MLP 통과 #-> torch.Size([8, 1, 512])
 
