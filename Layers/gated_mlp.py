@@ -9,18 +9,19 @@ class gated_mlp (nn.Module):
     """
     def __init__(self, seq_len, num_features, pred_len, hidden_units):
         super(gated_mlp, self).__init__()
-        self.seq_len = seq_len #인풋 길이
+        self.seq_len = seq_len #인풋 길이 #ex)336
         self.num_features = num_features #피처 수
-        self.pred_len = pred_len # 예측 길이
-        self.hidden_units = hidden_units #노드 수
+        self.pred_len = pred_len # 예측 길이 
+        self.hidden_units = hidden_units #노드 수 #ex)512
         kernel_size = 25 #same as Autoformer, Dlinear
         self.decomposition = series_decomp(kernel_size)
         
-        self.input_layer = nn.Linear(self.num_features,1) #차원 축소
+        self.input_layer = nn.Linear(self.num_features,1)
 
         self.input_gate = nn.Sequential(
             nn.Linear(self.seq_len, self.seq_len),
-            nn.Sigmoid()) #Input_gate   
+            nn.Sigmoid()) #Input_gate
+
 
         self.trend_mlp = nn.Sequential(
             nn.Linear(self.seq_len, self.hidden_units),
@@ -52,7 +53,7 @@ class gated_mlp (nn.Module):
         i_gate_r = self.input_gate(residual_train) #-> torch.Size([8, 1, 336])
         residual_train = residual_train * i_gate_r #-> torch.Size([8, 1, 336])
 
-
+        
         # trend MLP (gated)
         trend_mlp = self.trend_mlp(trend_train) #MLP 통과 #-> torch.Size([8, 1, 512])
 
