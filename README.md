@@ -7,7 +7,8 @@ A study of an efficient long-term time series forecasting model considering unst
 
 <br> Global Architecture </br>
 
-<img width="905" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/0e2a3ff0-9446-49a2-974d-239232121b64">
+<img width="887" alt="image" src="https://github.com/Reign2121/GD-MLP/assets/121419113/accc2ac9-4f8e-40b5-988d-32cec6a096e2">
+
 
 
 
