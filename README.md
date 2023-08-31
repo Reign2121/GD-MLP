@@ -27,7 +27,7 @@ Background IDEA:
 
 Solution IDEA: 
 
-- 현실세계의 불안정한 환경에 대응하기 위해 적절한 trend와 그에 따른 scale(locality)을 잘 포착하도록 하자.
+- 실생활의 불안정한 환경에 대응하기 위해 적절한 trend와 그에 따른 scale(locality)을 잘 포착하도록 하자.
 
 - 복잡한 변동을 분해(Decomposition)하여 각 변동 요소의 명확한 패턴을 학습하고, 각 요소의 영향력을 가중치로 환산하여 반영하자.
 
