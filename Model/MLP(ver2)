@@ -54,14 +54,14 @@ class Model(nn.Module):
         
         self.input_gate1 = nn.Sequential(
             nn.Linear(self.seq_len, self.seq_len//reduction, bias=False),
-            nn.GELU(),
+            nn.ReLU(inplace=True),
             nn.Linear(self.seq_len//reduction, self.seq_len, bias=False),
             nn.Sigmoid()
         ) #Input_gate
        
         self.input_gate2 = nn.Sequential(
             nn.Linear(self.seq_len, self.seq_len//reduction, bias=False),
-            nn.GELU(),
+            nn.ReLU(inplace=True),
             nn.Linear(self.seq_len//reduction, self.seq_len, bias=False),
             nn.Sigmoid()
         ) #Input_gate
@@ -79,24 +79,19 @@ class Model(nn.Module):
             for i in range(self.channels):
                 
                 self.Linear_Seasonal.append(nn.Linear(self.seq_len,self.pred_len))
-                
+    
                 self.Linear_Trend.append(nn.Linear(self.seq_len,self.pred_len))
 
                 # Use this two lines if you want to visualize the weights
                 # self.Linear_Seasonal[i].weight = nn.Parameter((1/self.seq_len)*torch.ones([self.pred_len,self.seq_len]))
                 # self.Linear_Trend[i].weight = nn.Parameter((1/self.seq_len)*torch.ones([self.pred_len,self.seq_len]))
         else:
-            hidden_units = 24
             self.Linear_Seasonal = nn.Sequential(
-            nn.Linear(self.seq_len, hidden_units, bias=False),
-            nn.GELU(),
-            nn.Linear(hidden_units, self.pred_len, bias=False)
-        ) # MLP for Trend
+                nn.Linear(self.seq_len,512),
+                nn.Linear(512,self.pred_len))
             self.Linear_Trend = nn.Sequential(
-            nn.Linear(self.seq_len, hidden_units, bias=False),
-            nn.GELU(),
-            nn.Linear(hidden_units, self.pred_len, bias=False)
-        ) # MLP for Seasonal   
+                nn.Linear(self.seq_len,512),
+                nn.Linear(512,self.pred_len))
             
             # Use this two lines if you want to visualize the weights
             # self.Linear_Seasonal.weight = nn.Parameter((1/self.seq_len)*torch.ones([self.pred_len,self.seq_len]))
@@ -111,7 +106,7 @@ class Model(nn.Module):
         seasonal_init = seasonal_init * i_gate_r
         
         #i_gate_t = self.input_gate2(trend_init)
-        trend_init = trend_init * 1
+        trend_init = trend_init * 1#i_gate_t
         
         
         if self.individual:
@@ -129,3 +124,4 @@ class Model(nn.Module):
             
         x = (seasonal_output * s_output) + (trend_output * t_output)
         return x.permute(0,2,1) # to [Batch, Output length, Channel]
+
